@@ -175,7 +175,7 @@ def smooth_scroll(width, height, direction="down"):
     for _ in range(steps):
         if not running:
             return
-        duration = random.randint(250, 450)
+        duration = random.randint(150, 250)
         waydroid_shell(
             [
                 "input",
@@ -187,7 +187,7 @@ def smooth_scroll(width, height, direction="down"):
                 str(duration),
             ]
         )
-        sleep_interruptible(random.uniform(0.2, 0.5))
+        sleep_interruptible(random.uniform(0.1, 0.3))
 
 
 def pre_tap_scroll(width, height):
