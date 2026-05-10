@@ -198,3 +198,103 @@ Code review best practices
 Technical writing guide
 Tech startup funding
 SaaS business model
+Battery health iPhone tips
+Android 15 features overview
+Best budget laptop 2026
+Noise canceling earbuds comparison
+Home office standing desk setup
+Focus music playlists for coding
+Time management techniques study
+Best travel backpacks 2026
+Minimalist wardrobe essentials
+Smartwatch battery life hacks
+Meal prep high protein recipes
+Mediterranean diet grocery list
+Easy meal ideas for students
+Cold brew coffee ratio guide
+Sleep hygiene checklist
+Morning routine productivity
+Stretching routine for desk workers
+Ergonomic mouse wrist pain
+Blue light glasses effectiveness
+Budget fitness tracker 2026
+Personal budget template excel
+Investing for beginners 2026
+Emergency fund how much
+Credit score improvement tips
+Side hustle ideas online
+Freelance portfolio examples
+Resume ATS friendly format
+Interview STAR method examples
+Remote job search tips
+Career switch to tech guide
+Learn SQL fast
+Python automation scripts
+JavaScript async await tutorial
+React state management comparison
+Vue 4 roadmap
+Next.js 15 features
+Svelte performance benchmarks
+Node.js security best practices
+API rate limiting strategies
+OAuth 2.1 explained
+JWT vs session cookies
+Database indexing basics
+Postgres vs MySQL 2026
+Redis cache patterns
+Vector database use cases
+RAG pipeline tutorial
+Prompt engineering guide
+LLM eval metrics
+AI agent frameworks comparison
+Open source LLMs 2026
+GPU pricing trends 2026
+Best mini PC for homelab
+Home server backup strategy
+Proxmox vs ESXi 2026
+Kubernetes homelab guide
+Docker compose examples
+CI/CD pipeline templates
+GitHub Actions caching tips
+Code review checklist
+Monorepo vs polyrepo
+Agile retrospectives questions
+Product roadmap templates
+OKR examples for startups
+Customer discovery questions
+UX research methods
+Design system checklist
+Typography pairing guide
+Color palette generator
+Accessibility WCAG 2.2 checklist
+Lighthouse performance score tips
+Web vitals optimization 2026
+Image compression best tools
+Video editing workflow tips
+Notion productivity systems
+Obsidian graph workflows
+Best note taking apps 2026
+Digital declutter plan
+Password manager setup guide
+Two factor authentication apps
+VPN privacy comparison
+Smart home security cameras
+Robot vacuum buying guide
+Electric scooter regulations 2026
+EV charging at home cost
+Solar panel ROI calculator
+Heat pump installation guide
+Indoor air purifier reviews
+Water filter pitcher comparison
+Gardening beginner tips
+Indoor plants low light
+Travel itinerary planner
+Budget airlines baggage rules
+Language learning spaced repetition
+Best online courses 2026
+SAT prep schedule
+College scholarship search
+IELTS speaking topics 2026
+TOEFL writing templates
+Public speaking anxiety tips
+Mindfulness meditation for beginners
