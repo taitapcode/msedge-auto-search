@@ -1,10 +1,14 @@
-import subprocess
-import time
+import json
 import random
-import sys
 import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
 
-NUMBER_OF_KEYWORDS = 2
+NUMBER_OF_KEYWORDS = 30
+DEFAULT_KEYWORDS = ["Cloud 3.0 architectures", "Multiagent AI systems"]
+KEYWORDS_FILE = Path(__file__).resolve().parent / "keywords.json"
 running = True
 terminal_state = None
 
@@ -49,14 +53,80 @@ def restore_terminal():
     terminal_state = None
 
 
-def get_keywords():
+def load_keyword_data():
+    keywords = DEFAULT_KEYWORDS[:]
+    usage = {}
     try:
-        with open("keywords.txt", "r", encoding="utf-8") as f:
-            words = list(set(line.strip() for line in f if line.strip()))
-            random.shuffle(words)
-            return words[:NUMBER_OF_KEYWORDS]
-    except FileNotFoundError:
-        return ["Cloud 3.0 architectures", "Multiagent AI systems"]
+        data = json.loads(KEYWORDS_FILE.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        data = None
+
+    raw_keywords = []
+    raw_usage = {}
+
+    if isinstance(data, list):
+        raw_keywords = data
+    elif isinstance(data, dict):
+        if "keywords" in data or "usage" in data:
+            raw_keywords = data.get("keywords", [])
+            raw_usage = data.get("usage", {}) if isinstance(data.get("usage"), dict) else {}
+        else:
+            raw_keywords = list(data.keys())
+            raw_usage = data
+
+    words = []
+    for item in raw_keywords:
+        if not isinstance(item, str):
+            continue
+        value = item.strip()
+        if value:
+            words.append(value)
+
+    deduped = list(dict.fromkeys(words))
+    keywords = deduped or keywords
+
+    clean_usage = {}
+    if isinstance(raw_usage, dict):
+        for key, value in raw_usage.items():
+            if not isinstance(key, str):
+                continue
+            count = 0
+            if isinstance(value, dict):
+                count_value = value.get("usage", 0)
+            else:
+                count_value = value
+            try:
+                count = int(count_value)
+            except (TypeError, ValueError):
+                count = 0
+            clean_usage[key.strip()] = max(count, 0)
+
+    return keywords, clean_usage
+
+
+def save_keyword_data(keywords, usage):
+    payload = {}
+    for word in keywords:
+        count = usage.get(word, 0)
+        payload[word] = {"usage": int(count)}
+    try:
+        KEYWORDS_FILE.write_text(
+            json.dumps(payload, ensure_ascii=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        return
+
+
+def select_keywords(words, usage, limit):
+    shuffled = list(words)
+    random.shuffle(shuffled)
+    shuffled.sort(key=lambda word: usage.get(word, 0))
+    return shuffled[:limit]
+
+
+def increment_usage(usage, word):
+    usage[word] = usage.get(word, 0) + 1
 
 
 def run_ydotool(args):
@@ -145,7 +215,8 @@ def automate_search():
         stderr=subprocess.DEVNULL,
     )
 
-    keywords = get_keywords()
+    words, usage = load_keyword_data()
+    keywords = select_keywords(words, usage, NUMBER_OF_KEYWORDS)
     log(f"Loaded {len(keywords)} keywords. Waiting for browser...")
     sleep_interruptible(3)
 
@@ -164,6 +235,7 @@ def automate_search():
         run_ydotool(["type", word])
         sleep_interruptible(0.6)
         run_ydotool(["key", "28:1", "28:0"])
+        increment_usage(usage, word)
 
         sleep_interruptible(random.uniform(1, 2))
 
@@ -175,6 +247,7 @@ def automate_search():
         log("Finished all keywords.")
         close_browser()
         stop_ydotoold()
+    save_keyword_data(words, usage)
     restore_terminal()
 
 

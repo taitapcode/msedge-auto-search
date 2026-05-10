@@ -1,4 +1,5 @@
 import argparse
+import json
 import random
 import re
 import signal
@@ -13,6 +14,7 @@ DEFAULT_KEYWORDS = [
     "Cloud 3.0 architectures",
     "Multiagent AI systems",
 ]
+KEYWORDS_FILE = Path(__file__).resolve().parent / "keywords.json"
 PREFERRED_PACKAGE = "com.microsoft.bing"
 DEFAULT_TAP_X = None
 DEFAULT_TAP_Y = 30
@@ -20,17 +22,76 @@ PRE_TAP_SCROLL = True
 
 running = True
 shell_requires_sudo = False
+keyword_list = []
+keyword_usage = {}
 
 
-def get_keywords(limit):
-    keywords_file = Path(__file__).resolve().parent / "keywords.txt"
+def load_keyword_data():
     try:
-        with keywords_file.open("r", encoding="utf-8") as handle:
-            words = list({line.strip() for line in handle if line.strip()})
-            random.shuffle(words)
-            return words[:limit]
-    except FileNotFoundError:
-        return DEFAULT_KEYWORDS[:limit]
+        data = json.loads(KEYWORDS_FILE.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        data = None
+
+    raw_keywords = []
+    raw_usage = {}
+
+    if isinstance(data, list):
+        raw_keywords = data
+    elif isinstance(data, dict):
+        if "keywords" in data or "usage" in data:
+            raw_keywords = data.get("keywords", [])
+            raw_usage = data.get("usage", {}) if isinstance(data.get("usage"), dict) else {}
+        else:
+            raw_keywords = list(data.keys())
+            raw_usage = data
+
+    words = []
+    for item in raw_keywords:
+        if not isinstance(item, str):
+            continue
+        value = item.strip()
+        if value:
+            words.append(value)
+    words = list(dict.fromkeys(words))
+    if not words:
+        words = DEFAULT_KEYWORDS[:]
+
+    usage = {}
+    if isinstance(raw_usage, dict):
+        for key, value in raw_usage.items():
+            if not isinstance(key, str):
+                continue
+            count_value = value.get("usage", 0) if isinstance(value, dict) else value
+            try:
+                usage[key.strip()] = max(int(count_value), 0)
+            except (TypeError, ValueError):
+                usage[key.strip()] = 0
+
+    return words, usage
+
+
+def save_keyword_data(keywords, usage):
+    payload = {}
+    for word in keywords:
+        payload[word] = {"usage": int(usage.get(word, 0))}
+    try:
+        KEYWORDS_FILE.write_text(
+            json.dumps(payload, ensure_ascii=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        return
+
+
+def select_keywords(words, usage, limit):
+    shuffled = list(words)
+    random.shuffle(shuffled)
+    shuffled.sort(key=lambda word: usage.get(word, 0))
+    return shuffled[:limit]
+
+
+def increment_usage(usage, word):
+    usage[word] = usage.get(word, 0) + 1
 
 
 def warmup_sudo():
@@ -232,7 +293,9 @@ def automate_search(args):
     detect_shell_privileges()
     width, height = get_screen_size()
     package_name = detect_preferred_package()
-    keywords = get_keywords(args.keywords)
+    global keyword_list, keyword_usage
+    keyword_list, keyword_usage = load_keyword_data()
+    keywords = select_keywords(keyword_list, keyword_usage, args.keywords)
     tap_x, tap_y = get_tap_coords(width, height, args)
 
     for i, word in enumerate(keywords, start=1):
@@ -250,6 +313,7 @@ def automate_search(args):
             waydroid_shell(["input", "text", encode_input_text(word)])
             sleep_interruptible(0.2)
             waydroid_shell(["input", "keyevent", "66"])
+            increment_usage(keyword_usage, word)
         else:
             open_search(word, package_name=package_name)
         sleep_interruptible(random.uniform(1, 2))
@@ -261,6 +325,7 @@ def automate_search(args):
 
     if running:
         waydroid_shell(["input", "keyevent", "3"])
+    save_keyword_data(keyword_list, keyword_usage)
 
 
 if __name__ == "__main__":
