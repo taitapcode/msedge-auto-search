@@ -6,6 +6,47 @@ import signal
 
 NUMBER_OF_KEYWORDS = 2
 running = True
+terminal_state = None
+
+
+def run_cmd(cmd, **kwargs):
+    if "stdout" not in kwargs:
+        kwargs["stdout"] = subprocess.DEVNULL
+    if "stderr" not in kwargs:
+        kwargs["stderr"] = subprocess.DEVNULL
+    return subprocess.run(cmd, **kwargs)
+
+
+def log(message):
+    if sys.stdout.isatty():
+        sys.stdout.write("\r\033[2K")
+    sys.stdout.write(f"{message}\n")
+    sys.stdout.flush()
+
+
+def disable_echoctl():
+    global terminal_state
+    if not sys.stdin.isatty():
+        return
+    result = run_cmd(
+        ["stty", "-g"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    if result.returncode != 0:
+        return
+    terminal_state = result.stdout.strip()
+    if terminal_state:
+        run_cmd(["stty", "-echoctl"], stdout=None, stderr=None)
+
+
+def restore_terminal():
+    global terminal_state
+    if not terminal_state:
+        return
+    run_cmd(["stty", terminal_state], stdout=None, stderr=None)
+    terminal_state = None
 
 
 def get_keywords():
@@ -21,40 +62,43 @@ def get_keywords():
 def run_ydotool(args):
     if not running:
         return
-    subprocess.run(["ydotool"] + args)
+    run_cmd(["ydotool"] + args)
 
 
 def start_ydotoold():
-    print("🔧 Đang khởi động ydotoold daemon...")
+    log("Starting ydotoold daemon...")
     subprocess.Popen(
         [
             "sudo",
             "ydotoold",
             "--socket-path=/run/user/1000/.ydotool_socket",
             "--socket-perm=0666",
-        ]
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     time.sleep(1)
-    print("✅ ydotoold đã sẵn sàng.")
+    log("ydotoold is ready.")
 
 
 def stop_ydotoold():
-    print("🔧 Đang tắt ydotoold daemon...")
-    subprocess.run(["sudo", "pkill", "ydotoold"])
-    print("✅ ydotoold đã dừng.")
+    log("Stopping ydotoold daemon...")
+    run_cmd(["sudo", "pkill", "ydotoold"])
+    log("ydotoold stopped.")
 
 
 def close_browser():
-    print("🌐 Đang đóng Microsoft Edge...")
-    subprocess.run(["pkill", "-f", "msedge"])
+    log("Closing Microsoft Edge...")
+    run_cmd(["pkill", "-f", "msedge"])
     time.sleep(1)
-    print("✅ Đã đóng trình duyệt.")
+    log("Browser closed.")
 
 
-def handle_exit(sig, frame):
+def handle_exit(_sig, _frame):
     global running
     running = False
-    print("\n🛑 Script đã dừng.")
+    log("Script stopped.")
+    restore_terminal()
     close_browser()
     stop_ydotoold()
     sys.exit(0)
@@ -71,7 +115,7 @@ def sleep_interruptible(seconds):
 
 
 def smooth_scroll(direction="down"):
-    print(f"🖱️ Đang cuộn trang {'xuống' if direction == 'down' else 'lên'} từ từ...")
+    log(f"Scrolling {'down' if direction == 'down' else 'up'}...")
     steps = random.randint(5, 15)
     val = -2 if direction == "down" else 2
     for _ in range(steps):
@@ -82,28 +126,33 @@ def smooth_scroll(direction="down"):
 
 
 def warmup_sudo():
-    print("🔑 Yêu cầu xác thực sudo (nhập mật khẩu nếu cần)...")
-    result = subprocess.run(["sudo", "-v"])
+    log("Requesting sudo authentication...")
+    result = run_cmd(["sudo", "-v"], stdout=None, stderr=None)
     if result.returncode != 0:
-        print("❌ Xác thực sudo thất bại. Thoát.")
+        log("Sudo authentication failed. Exiting.")
         sys.exit(1)
-    print("✅ Xác thực sudo thành công.")
+    log("Sudo authentication ok.")
 
 
 def automate_search():
     warmup_sudo()
+    disable_echoctl()
     start_ydotoold()
-    print("🚀 Đang khởi động Microsoft Edge...")
-    subprocess.Popen(["microsoft-edge-stable"])
+    log("Launching Microsoft Edge...")
+    subprocess.Popen(
+        ["microsoft-edge-stable"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
 
     keywords = get_keywords()
-    print(f"✅ Đã nạp {len(keywords)} từ khóa ngẫu nhiên. Đang đợi trình duyệt...")
+    log(f"Loaded {len(keywords)} keywords. Waiting for browser...")
     sleep_interruptible(3)
 
     for i, word in enumerate(keywords):
         if not running:
             break
-        print(f"🔍 [{i+1}/{len(keywords)}] Đang tìm: {word}")
+        log(f"Search [{i+1}/{len(keywords)}]: {word}")
 
         run_ydotool(["key", "29:1", "38:1", "38:0", "29:0"])
         sleep_interruptible(0.5)
@@ -122,14 +171,11 @@ def automate_search():
         sleep_interruptible(random.uniform(0.5, 1))
         smooth_scroll(direction="up")
 
-        delay = random.uniform(5, 8)
-        print(f"⏳ Nghỉ {delay:.2f} giây trước khi sang từ tiếp theo...")
-        sleep_interruptible(delay)
-
     if running:
-        print("🎉 Hoàn thành tất cả từ khóa!")
+        log("Finished all keywords.")
         close_browser()
         stop_ydotoold()
+    restore_terminal()
 
 
 if __name__ == "__main__":
