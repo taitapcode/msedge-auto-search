@@ -40,7 +40,9 @@ def load_keyword_data():
     elif isinstance(data, dict):
         if "keywords" in data or "usage" in data:
             raw_keywords = data.get("keywords", [])
-            raw_usage = data.get("usage", {}) if isinstance(data.get("usage"), dict) else {}
+            raw_usage = (
+                data.get("usage", {}) if isinstance(data.get("usage"), dict) else {}
+            )
         else:
             raw_keywords = list(data.keys())
             raw_usage = data
@@ -297,6 +299,7 @@ def automate_search(args):
     keyword_list, keyword_usage = load_keyword_data()
     keywords = select_keywords(keyword_list, keyword_usage, args.keywords)
     tap_x, tap_y = get_tap_coords(width, height, args)
+    time.sleep(5)
 
     for i, word in enumerate(keywords, start=1):
         if not running:
