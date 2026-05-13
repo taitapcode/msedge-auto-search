@@ -12,7 +12,7 @@
     "usage": 0
   },
   "Digital provenance tools": {
-    "usage": 0
+    "usage": 1
   },
   "Preemptive cybersecurity": {
     "usage": 0
@@ -51,7 +51,7 @@
     "usage": 1
   },
   "Smart home energy monitors": {
-    "usage": 0
+    "usage": 1
   },
   "Budget-friendly meal prep containers": {
     "usage": 0
@@ -93,7 +93,7 @@
     "usage": 1
   },
   "James Webb Telescope latest images": {
-    "usage": 0
+    "usage": 1
   },
   "Neuroplasticity and language learning": {
     "usage": 1
@@ -120,7 +120,7 @@
     "usage": 1
   },
   "Squid Game Season 3 release date": {
-    "usage": 0
+    "usage": 1
   },
   "Mission Impossible Final Reckoning trailer": {
     "usage": 0
@@ -132,7 +132,7 @@
     "usage": 0
   },
   "Minecraft Movie reviews": {
-    "usage": 0
+    "usage": 1
   },
   "Healthy air fryer recipes": {
     "usage": 0
@@ -141,7 +141,7 @@
     "usage": 0
   },
   "Modern minimalist interior design": {
-    "usage": 0
+    "usage": 1
   },
   "Upcoming RPG games 2027": {
     "usage": 1
@@ -150,7 +150,7 @@
     "usage": 0
   },
   "Arch Linux optimization 2026": {
-    "usage": 0
+    "usage": 1
   },
   "Niri compositor configuration guide": {
     "usage": 1
@@ -162,7 +162,7 @@
     "usage": 1
   },
   "Neovim nightly vs stable 2026": {
-    "usage": 0
+    "usage": 1
   },
   "Blink.cmp setup tutorial": {
     "usage": 0
@@ -180,10 +180,10 @@
     "usage": 0
   },
   "Blue Hive optimization Bee Swarm": {
-    "usage": 0
+    "usage": 1
   },
   "Natro Macro latest version": {
-    "usage": 0
+    "usage": 1
   },
   "PvZ Fusion mod hybrid recipes": {
     "usage": 0
@@ -198,7 +198,7 @@
     "usage": 1
   },
   "Steam Deck OLED battery tips": {
-    "usage": 0
+    "usage": 1
   },
   "The Detective Is Already Dead manga vol 10": {
     "usage": 1
@@ -240,7 +240,7 @@
     "usage": 0
   },
   "How to make pork braised in fish sauce": {
-    "usage": 0
+    "usage": 1
   },
   "Curry pork ribs slow cooker": {
     "usage": 1
@@ -255,7 +255,7 @@
     "usage": 0
   },
   "Ergonomic chair for coding": {
-    "usage": 0
+    "usage": 1
   },
   "Best stylus for drawing 2026": {
     "usage": 0
@@ -264,7 +264,7 @@
     "usage": 0
   },
   "Timo Digital Bank interest": {
-    "usage": 0
+    "usage": 1
   },
   "Vietcombank Digibank security": {
     "usage": 0
@@ -273,7 +273,7 @@
     "usage": 0
   },
   "Minimalist workspace setup": {
-    "usage": 0
+    "usage": 1
   },
   "Supabase vs Vercel integration": {
     "usage": 1
@@ -297,16 +297,16 @@
     "usage": 0
   },
   "Artificial intelligence trends 2025": {
-    "usage": 0
+    "usage": 1
   },
   "Machine learning applications": {
     "usage": 0
   },
   "Deep learning neural networks": {
-    "usage": 0
+    "usage": 1
   },
   "Natural language processing tools": {
-    "usage": 0
+    "usage": 1
   },
   "Computer vision technology": {
     "usage": 0
@@ -318,7 +318,7 @@
     "usage": 1
   },
   "AI ethics and policy": {
-    "usage": 0
+    "usage": 1
   },
   "Quantum computing breakthroughs": {
     "usage": 1
@@ -327,7 +327,7 @@
     "usage": 0
   },
   "Cloud computing platforms": {
-    "usage": 0
+    "usage": 1
   },
   "Edge computing solutions": {
     "usage": 0
@@ -336,7 +336,7 @@
     "usage": 1
   },
   "5G network technology": {
-    "usage": 0
+    "usage": 1
   },
   "Blockchain applications 2025": {
     "usage": 1
@@ -375,7 +375,7 @@
     "usage": 1
   },
   "Docker deployment guide": {
-    "usage": 0
+    "usage": 1
   },
   "Microservices architecture": {
     "usage": 1
@@ -417,7 +417,7 @@
     "usage": 1
   },
   "Shopify vs WooCommerce": {
-    "usage": 0
+    "usage": 1
   },
   "Online payment solutions": {
     "usage": 1
@@ -438,10 +438,10 @@
     "usage": 0
   },
   "Real estate technology": {
-    "usage": 0
+    "usage": 1
   },
   "Health tech innovations": {
-    "usage": 0
+    "usage": 1
   },
   "Telemedicine platforms": {
     "usage": 1
@@ -456,7 +456,7 @@
     "usage": 1
   },
   "Online education platforms": {
-    "usage": 0
+    "usage": 1
   },
   "E-learning tools comparison": {
     "usage": 1
@@ -465,13 +465,13 @@
     "usage": 1
   },
   "Programming languages 2025": {
-    "usage": 0
+    "usage": 1
   },
   "Rust programming language": {
     "usage": 0
   },
   "Go programming language": {
-    "usage": 0
+    "usage": 1
   },
   "TypeScript best practices": {
     "usage": 0
@@ -480,10 +480,10 @@
     "usage": 0
   },
   "iOS vs Android development": {
-    "usage": 0
+    "usage": 1
   },
   "Flutter vs React Native": {
-    "usage": 0
+    "usage": 1
   },
   "UX design principles": {
     "usage": 0
@@ -501,7 +501,7 @@
     "usage": 0
   },
   "Podcast creation tools": {
-    "usage": 0
+    "usage": 1
   },
   "YouTube SEO tips": {
     "usage": 1
@@ -510,7 +510,7 @@
     "usage": 1
   },
   "Gaming industry trends": {
-    "usage": 0
+    "usage": 1
   },
   "Cloud gaming platforms": {
     "usage": 0
@@ -558,13 +558,13 @@
     "usage": 0
   },
   "Zero trust security model": {
-    "usage": 0
+    "usage": 1
   },
   "Password manager comparison": {
     "usage": 0
   },
   "VPN service review": {
-    "usage": 0
+    "usage": 1
   },
   "Network security tools": {
     "usage": 1
@@ -603,7 +603,7 @@
     "usage": 1
   },
   "Android 15 features overview": {
-    "usage": 0
+    "usage": 1
   },
   "Best budget laptop 2026": {
     "usage": 1
@@ -642,13 +642,13 @@
     "usage": 0
   },
   "Sleep hygiene checklist": {
-    "usage": 0
+    "usage": 1
   },
   "Morning routine productivity": {
     "usage": 0
   },
   "Stretching routine for desk workers": {
-    "usage": 0
+    "usage": 1
   },
   "Ergonomic mouse wrist pain": {
     "usage": 1
@@ -672,7 +672,7 @@
     "usage": 0
   },
   "Side hustle ideas online": {
-    "usage": 0
+    "usage": 1
   },
   "Freelance portfolio examples": {
     "usage": 1
@@ -687,7 +687,7 @@
     "usage": 1
   },
   "Career switch to tech guide": {
-    "usage": 0
+    "usage": 1
   },
   "Learn SQL fast": {
     "usage": 0
@@ -696,7 +696,7 @@
     "usage": 1
   },
   "JavaScript async await tutorial": {
-    "usage": 0
+    "usage": 1
   },
   "React state management comparison": {
     "usage": 1
@@ -720,13 +720,13 @@
     "usage": 1
   },
   "JWT vs session cookies": {
-    "usage": 0
+    "usage": 1
   },
   "Database indexing basics": {
-    "usage": 0
+    "usage": 1
   },
   "Postgres vs MySQL 2026": {
-    "usage": 0
+    "usage": 1
   },
   "Redis cache patterns": {
     "usage": 1
@@ -747,7 +747,7 @@
     "usage": 1
   },
   "Open source LLMs 2026": {
-    "usage": 0
+    "usage": 1
   },
   "GPU pricing trends 2026": {
     "usage": 0
@@ -777,7 +777,7 @@
     "usage": 1
   },
   "Monorepo vs polyrepo": {
-    "usage": 0
+    "usage": 1
   },
   "Agile retrospectives questions": {
     "usage": 1
@@ -825,7 +825,7 @@
     "usage": 1
   },
   "Best note taking apps 2026": {
-    "usage": 0
+    "usage": 1
   },
   "Digital declutter plan": {
     "usage": 1
@@ -846,7 +846,7 @@
     "usage": 0
   },
   "Electric scooter regulations 2026": {
-    "usage": 0
+    "usage": 1
   },
   "EV charging at home cost": {
     "usage": 0
@@ -873,7 +873,7 @@
     "usage": 1
   },
   "Budget airlines baggage rules": {
-    "usage": 0
+    "usage": 1
   },
   "Language learning spaced repetition": {
     "usage": 0
@@ -888,10 +888,10 @@
     "usage": 0
   },
   "IELTS speaking topics 2026": {
-    "usage": 0
+    "usage": 1
   },
   "TOEFL writing templates": {
-    "usage": 0
+    "usage": 1
   },
   "Public speaking anxiety tips": {
     "usage": 0
