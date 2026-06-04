@@ -17,7 +17,7 @@ DEFAULT_KEYWORDS = [
 KEYWORDS_FILE = Path(__file__).resolve().parent / "keywords.json"
 PREFERRED_PACKAGE = "com.microsoft.bing"
 DEFAULT_TAP_X = None
-DEFAULT_TAP_Y = 30
+DEFAULT_TAP_Y = 50
 PRE_TAP_SCROLL = True
 
 running = True
