@@ -1,14 +1,17 @@
-import json
 import random
 import signal
 import subprocess
 import sys
 import time
-from pathlib import Path
 
-NUMBER_OF_KEYWORDS = 30
-DEFAULT_KEYWORDS = ["Cloud 3.0 architectures", "Multiagent AI systems"]
-KEYWORDS_FILE = Path(__file__).resolve().parent / "keywords.json"
+from keywords import (
+    NUMBER_OF_KEYWORDS,
+    increment_usage,
+    load_keyword_data,
+    save_keyword_data,
+    select_keywords,
+)
+
 running = True
 terminal_state = None
 
@@ -51,82 +54,6 @@ def restore_terminal():
         return
     run_cmd(["stty", terminal_state], stdout=None, stderr=None)
     terminal_state = None
-
-
-def load_keyword_data():
-    keywords = DEFAULT_KEYWORDS[:]
-    usage = {}
-    try:
-        data = json.loads(KEYWORDS_FILE.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
-        data = None
-
-    raw_keywords = []
-    raw_usage = {}
-
-    if isinstance(data, list):
-        raw_keywords = data
-    elif isinstance(data, dict):
-        if "keywords" in data or "usage" in data:
-            raw_keywords = data.get("keywords", [])
-            raw_usage = data.get("usage", {}) if isinstance(data.get("usage"), dict) else {}
-        else:
-            raw_keywords = list(data.keys())
-            raw_usage = data
-
-    words = []
-    for item in raw_keywords:
-        if not isinstance(item, str):
-            continue
-        value = item.strip()
-        if value:
-            words.append(value)
-
-    deduped = list(dict.fromkeys(words))
-    keywords = deduped or keywords
-
-    clean_usage = {}
-    if isinstance(raw_usage, dict):
-        for key, value in raw_usage.items():
-            if not isinstance(key, str):
-                continue
-            count = 0
-            if isinstance(value, dict):
-                count_value = value.get("usage", 0)
-            else:
-                count_value = value
-            try:
-                count = int(count_value)
-            except (TypeError, ValueError):
-                count = 0
-            clean_usage[key.strip()] = max(count, 0)
-
-    return keywords, clean_usage
-
-
-def save_keyword_data(keywords, usage):
-    payload = {}
-    for word in keywords:
-        count = usage.get(word, 0)
-        payload[word] = {"usage": int(count)}
-    try:
-        KEYWORDS_FILE.write_text(
-            json.dumps(payload, ensure_ascii=True, indent=2) + "\n",
-            encoding="utf-8",
-        )
-    except OSError:
-        return
-
-
-def select_keywords(words, usage, limit):
-    shuffled = list(words)
-    random.shuffle(shuffled)
-    shuffled.sort(key=lambda word: usage.get(word, 0))
-    return shuffled[:limit]
-
-
-def increment_usage(usage, word):
-    usage[word] = usage.get(word, 0) + 1
 
 
 def run_ydotool(args):
