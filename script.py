@@ -5,13 +5,13 @@ import sys
 import time
 
 from keywords import (
-    NUMBER_OF_KEYWORDS,
     increment_usage,
     load_keyword_data,
     save_keyword_data,
     select_keywords,
 )
 
+NUMBER_OF_KEYWORDS = 30
 running = True
 terminal_state = None
 

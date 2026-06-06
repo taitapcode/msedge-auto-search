@@ -3,7 +3,6 @@ import sqlite3
 import sys
 from pathlib import Path
 
-NUMBER_OF_KEYWORDS = 30
 DEFAULT_KEYWORDS = ["Cloud 3.0 architectures", "Multiagent AI systems"]
 
 BASE = Path(__file__).resolve().parent
@@ -13,13 +12,11 @@ DB_FILE = BASE / "keywords.db"
 
 def _get_db():
     conn = sqlite3.connect(str(DB_FILE))
-    conn.execute(
-        """CREATE TABLE IF NOT EXISTS keywords (
+    conn.execute("""CREATE TABLE IF NOT EXISTS keywords (
             id    INTEGER PRIMARY KEY AUTOINCREMENT,
             word  TEXT UNIQUE NOT NULL,
             usage INTEGER DEFAULT 0
-        )"""
-    )
+        )""")
     conn.commit()
     return conn
 
