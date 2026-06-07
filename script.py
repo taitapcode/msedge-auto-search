@@ -80,7 +80,7 @@ def start_ydotoold():
 
 def stop_ydotoold():
     log("Stopping ydotoold daemon...")
-    run_cmd(["sudo", "pkill", "ydotoold"])
+    run_cmd(["pkill", "ydotoold"])
     log("ydotoold stopped.")
 
 
@@ -131,10 +131,6 @@ def warmup_sudo():
     log("Sudo authentication ok.")
 
 
-def refresh_sudo():
-    run_cmd(["sudo", "-v"], stdout=None, stderr=None)
-
-
 def automate_search():
     warmup_sudo()
     disable_echoctl()
@@ -177,7 +173,6 @@ def automate_search():
     if running:
         log("Finished all keywords.")
         close_browser()
-        refresh_sudo()
         stop_ydotoold()
     save_keyword_data(words, usage)
     restore_terminal()
