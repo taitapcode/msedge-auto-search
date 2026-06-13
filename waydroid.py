@@ -184,7 +184,7 @@ def smooth_scroll(width, height, direction="down"):
 def pre_tap_scroll(width, height):
     x = width // 2
     start_y = int(height * 0.7)
-    end_y = int(height * 0.3)
+    end_y = int(height * 0.5)
     waydroid_shell(
         [
             "input",
