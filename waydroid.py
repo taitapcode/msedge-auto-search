@@ -64,7 +64,7 @@ def ensure_waydroid_session():
     if result.returncode != 0:
         combined = (result.stdout or "") + (result.stderr or "")
         if "Already tracking a session" not in combined:
-            print("Failed to start Waydroid session.")
+            print("Cannot start Waydroid session.")
             print(combined.strip())
             sys.exit(1)
     for _ in range(15):
@@ -249,9 +249,6 @@ def automate_search(args):
         sleep_interruptible(random.uniform(1, 2))
         smooth_scroll(width, height, direction="down")
         smooth_scroll(width, height, direction="up")
-        # delay = random.uniform(3, 5)
-        # print(f"Waiting {delay:.2f}s before next query")
-        # sleep_interruptible(delay)
 
     if running:
         waydroid_shell(["input", "keyevent", "3"])

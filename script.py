@@ -1,8 +1,11 @@
+import argparse
+import os
 import random
 import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 from keywords import (
     increment_usage,
@@ -14,6 +17,26 @@ from keywords import (
 NUMBER_OF_KEYWORDS = 30
 running = True
 terminal_state = None
+
+# Locate isolated profile in XDG Data share
+XDG_DATA = (
+    Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    / "msedge-auto-search"
+)
+BOT_PROFILE_DIR = XDG_DATA / "edge_bot_profile"
+BOT_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+
+# OPTIMIZED FLAGS FOR BOT BROWSER
+EDGE_COMMAND = [
+    "microsoft-edge-stable",
+    f"--user-data-dir={BOT_PROFILE_DIR}",
+    "--no-first-run",  # Skip welcome screen / first-run setup wizard
+    "--no-default-browser-check",  # Disable default browser check notification
+    "--password-store=basic",  # Skip GNOME/KDE keyring unlock prompt on Linux
+    "--disable-blink-features=AutomationControlled",  # Limit Microsoft AI detection of bot-controlled browser
+    "--disable-popup-blocking",  # Disable popup blocking to prevent script hangs
+    "--disable-features=EdgeShopping,EdgeWallet,EdgeSidebarEnhancedSidePanel,msHubApps",  # Disable shopping, wallet, cluttered sidebar features
+]
 
 
 def run_cmd(cmd, **kwargs):
@@ -85,16 +108,16 @@ def stop_ydotoold():
 
 
 def close_browser():
-    log("Closing Microsoft Edge...")
-    run_cmd(["pkill", "-f", "msedge"])
+    log("Closing bot Microsoft Edge...")
+    run_cmd(["pkill", "-f", str(BOT_PROFILE_DIR)])
     time.sleep(1)
-    log("Browser closed.")
+    log("Bot browser closed.")
 
 
 def handle_exit(_sig, _frame):
     global running
     running = False
-    log("Script stopped.")
+    log("Script interrupted unexpectedly.")
     restore_terminal()
     close_browser()
     stop_ydotoold()
@@ -128,29 +151,47 @@ def warmup_sudo():
     if result.returncode != 0:
         log("Sudo authentication failed. Exiting.")
         sys.exit(1)
-    log("Sudo authentication ok.")
+    log("Sudo authentication OK.")
+
+
+def open_browser_manually():
+    log("========================================================")
+    log(" Launching Microsoft Edge in MANUAL MODE (Optimized)")
+    log(f" Profile path: {BOT_PROFILE_DIR}")
+    log(" -> Please log into your Microsoft Rewards account.")
+    log(" -> After finishing, close the Edge window to save session.")
+    log("========================================================")
+    # Use optimized command with flags
+    subprocess.run(
+        EDGE_COMMAND,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    log(" Session state saved successfully!")
 
 
 def automate_search():
     warmup_sudo()
     disable_echoctl()
     start_ydotoold()
-    log("Launching Microsoft Edge...")
+    log("Opening Microsoft Edge (Optimized automation mode)...")
+
+    # Use optimized command with flags
     subprocess.Popen(
-        ["microsoft-edge-stable"],
+        EDGE_COMMAND,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
 
     words, usage = load_keyword_data()
     keywords = select_keywords(words, usage, NUMBER_OF_KEYWORDS)
-    log(f"Loaded {len(keywords)} keywords. Waiting for browser...")
+    log(f"Loaded {len(keywords)} keywords. Waiting for browser to stabilize...")
     sleep_interruptible(3)
 
     for i, word in enumerate(keywords):
         if not running:
             break
-        log(f"Search [{i+1}/{len(keywords)}]: {word}")
+        log(f"Searching [{i+1}/{len(keywords)}]: {word}")
 
         run_ydotool(["key", "29:1", "38:1", "38:0", "29:0"])
         sleep_interruptible(0.5)
@@ -181,4 +222,14 @@ def automate_search():
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
-    automate_search()
+
+    parser = argparse.ArgumentParser(description="msedge-auto-search PC interface")
+    parser.add_argument(
+        "--open", action="store_true", help="Open Edge manually for configuration/login"
+    )
+    args = parser.parse_args()
+
+    if args.open:
+        open_browser_manually()
+    else:
+        automate_search()

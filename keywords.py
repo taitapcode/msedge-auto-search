@@ -1,22 +1,50 @@
 import random
 import sqlite3
 import sys
+import os
 from pathlib import Path
 
 DEFAULT_KEYWORDS = ["Cloud 3.0 architectures", "Multiagent AI systems"]
 
-BASE = Path(__file__).resolve().parent
-KEYWORDS_TXT = BASE / "keywords.txt"
-DB_FILE = BASE / "keywords.db"
+
+def _resolve_paths():
+    base_dir = Path(__file__).resolve().parent
+    # Check write permission in current directory (normal run)
+    try:
+        test_file = base_dir / ".nix_write_test"
+        test_file.touch()
+        test_file.unlink()
+        return base_dir / "keywords.txt", base_dir / "keywords.db"
+    except (OSError, IOError):
+        # If running in Nix Store (Read-Only), fall back to XDG personal storage
+        xdg_data = (
+            Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+            / "msedge-auto-search"
+        )
+        xdg_data.mkdir(parents=True, exist_ok=True)
+
+        dest_txt = xdg_data / "keywords.txt"
+        # Copy default keyword file from Nix package to personal directory if not present
+        if not dest_txt.exists() and (base_dir / "keywords.txt").exists():
+            import shutil
+
+            shutil.copy(base_dir / "keywords.txt", dest_txt)
+
+        return dest_txt, xdg_data / "keywords.db"
+
+
+KEYWORDS_TXT, DB_FILE = _resolve_paths()
 
 
 def _get_db():
     conn = sqlite3.connect(str(DB_FILE))
-    conn.execute("""CREATE TABLE IF NOT EXISTS keywords (
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS keywords (
             id    INTEGER PRIMARY KEY AUTOINCREMENT,
             word  TEXT UNIQUE NOT NULL,
             usage INTEGER DEFAULT 0
-        )""")
+        )"""
+    )
     conn.commit()
     return conn
 
@@ -106,43 +134,3 @@ def cmd_list():
     rows = conn.execute(
         "SELECT word, usage FROM keywords ORDER BY usage ASC, word ASC"
     ).fetchall()
-    conn.close()
-    if not rows:
-        print("(no keywords)")
-        return
-    for word, count in rows:
-        print(f"{count:4d}  {word}")
-
-
-def cmd_seed():
-    conn = _get_db()
-    words = _load_words_from_txt()
-    conn.executemany(
-        "INSERT OR IGNORE INTO keywords (word) VALUES (?)",
-        [(w,) for w in words],
-    )
-    conn.commit()
-    n = conn.execute("SELECT COUNT(*) FROM keywords").fetchone()[0]
-    conn.close()
-    print(f"seeded {len(words)} words from {KEYWORDS_TXT.name}; total in db: {n}")
-
-
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    if not args:
-        print("usage: python keywords.py <add|list|seed> [...]")
-        sys.exit(1)
-
-    match args[0]:
-        case "add":
-            if len(args) < 2:
-                print("usage: python keywords.py add <keyword>")
-                sys.exit(1)
-            print(add_keyword(" ".join(args[1:])))
-        case "list":
-            cmd_list()
-        case "seed":
-            cmd_seed()
-        case _:
-            print(f"unknown command: {args[0]}")
-            sys.exit(1)
