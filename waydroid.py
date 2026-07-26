@@ -16,7 +16,6 @@ from keywords import (
 
 NUMBER_OF_KEYWORDS = 20
 PREFERRED_PACKAGE = "com.microsoft.bing"
-DEFAULT_TAP_X = None
 DEFAULT_TAP_Y = 50
 PRE_TAP_SCROLL = True
 
@@ -79,21 +78,53 @@ def detect_preferred_package():
         capture_output=True,
         text=True,
     )
-    if result.returncode != 0:
-        return None
-    installed = set()
-    for line in result.stdout.splitlines():
-        line = line.strip()
-        if line.startswith("packageName:"):
-            installed.add(line.split(":", 1)[1].strip())
-    return PREFERRED_PACKAGE if PREFERRED_PACKAGE in installed else None
+    candidates = []
+    if result.returncode == 0:
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if line.startswith("packageName:"):
+                pkg = line.split(":", 1)[1].strip()
+                candidates.append(pkg)
+
+    best = _find_best_bing_package(candidates)
+    if best:
+        print(f"Bing package detected: {best}")
+    else:
+        best = PREFERRED_PACKAGE
+        print(f"Bing package not found, using default: {best}")
+    return best
+
+
+def _find_best_bing_package(candidates):
+    best_score = -1
+    best_pkg = None
+    for pkg in candidates:
+        lower = pkg.lower()
+        score = 0
+        if "bing" in lower:
+            score += 10
+        if "microsoft" in lower:
+            score += 5
+        if "search" in lower:
+            score += 3
+        if "start" in lower:
+            score += 1
+        if score > best_score:
+            best_score = score
+            best_pkg = pkg
+    return best_pkg
 
 
 def launch_app(package_name):
     if not package_name:
         return False
     result = subprocess.run(["waydroid", "app", "launch", package_name])
-    return result.returncode == 0
+    if result.returncode == 0:
+        return True
+    result = waydroid_shell(
+        ["monkey", "-p", package_name, "-c", "android.intent.category.LAUNCHER", "1"]
+    )
+    return result is not None and result.returncode == 0
 
 
 def detect_shell_privileges():
@@ -211,7 +242,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_tap_coords(width, height, args):
+def get_tap_coords(width, height):
     x = int(width * 0.5)
     y = DEFAULT_TAP_Y
     return x, y
@@ -225,7 +256,7 @@ def automate_search(args):
     package_name = detect_preferred_package()
     word_list, usage = load_keyword_data()
     keywords = select_keywords(word_list, usage, args.keywords)
-    tap_x, tap_y = get_tap_coords(width, height, args)
+    tap_x, tap_y = get_tap_coords(width, height)
     time.sleep(5)
 
     for i, word in enumerate(keywords, start=1):
