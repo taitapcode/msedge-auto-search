@@ -134,3 +134,22 @@ def cmd_list():
     rows = conn.execute(
         "SELECT word, usage FROM keywords ORDER BY usage ASC, word ASC"
     ).fetchall()
+    conn.close()
+    if not rows:
+        print("No keywords found.")
+    else:
+        print(f"{'Keyword':<50} {'Usage':>5}")
+        print("-" * 57)
+        for word, count in rows:
+            print(f"{word:<50} {count:>5}")
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Manage search keywords")
+    parser.add_argument("--add", type=str, help="Add a new keyword")
+    args = parser.parse_args()
+    if args.add:
+        print(add_keyword(args.add))
+    else:
+        cmd_list()
